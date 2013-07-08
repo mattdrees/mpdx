@@ -1,3 +1,4 @@
+require 'google/api_client'
 class Person::GoogleAccount < ActiveRecord::Base
   extend Person::Account
 
@@ -26,6 +27,18 @@ class Person::GoogleAccount < ActiveRecord::Base
 
   def queue_import_data
 
+  end
+
+  def client
+    unless @client
+      @client = Google::APIClient.new(application_name: 'MPDX', application_version: '1.0')
+      @client.authorization.access_token = token
+    end
+    @client
+  end
+
+  def plus
+    @plus ||= client.discovered_api('plus')
   end
 
   def contacts
